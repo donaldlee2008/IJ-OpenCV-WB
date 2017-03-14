@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>javacv</artifactId>
-			<version>1.2</version>
+			<version>1.3.2</version>
 		</dependency>
 
 
@@ -172,13 +172,13 @@
 									<destFileName>ij.jar</destFileName>
 								</artifactItem>
 
-								<!-- <artifactItem> <groupId>org.bytedeco</groupId> <artifactId>javacpp</artifactId> 
+								<artifactItem> <groupId>org.bytedeco</groupId> <artifactId>javacpp</artifactId> 
 									<overWrite>true</overWrite> <outputDirectory>${project.basedir}/ImageJ/jars</outputDirectory> 
-									</artifactItem> -->
+									</artifactItem>
 
-								<!-- <artifactItem> <groupId>org.bytedeco</groupId> <artifactId>javacv</artifactId> 
+								<artifactItem> <groupId>org.bytedeco</groupId> <artifactId>javacv</artifactId> 
 									<overWrite>true</overWrite> <outputDirectory>${project.basedir}/ImageJ/jars</outputDirectory> 
-									</artifactItem> -->
+									</artifactItem>
 
 								<!-- <artifactItem> <groupId>org.bytedeco.javacpp-presets</groupId> 
 									<artifactId>opencv</artifactId> <overWrite>true</overWrite> <outputDirectory>${project.basedir}/ImageJ/jars</outputDirectory> 
@@ -191,8 +191,6 @@
 								<!-- <artifactItem> <groupId>org.bytedeco.javacpp-presets</groupId> 
 									<artifactId>opencv</artifactId> <overWrite>true</overWrite> <outputDirectory>${project.basedir}/ImageJ/jars</outputDirectory> 
 									</artifactItem> -->
-
-
 
 								<!-- copy apache-commons-math.jar into ImageJ/jars -->
 								<!-- <artifactItem> <groupId>org.apache.commons</groupId> <artifactId>commons-math3</artifactId> 
