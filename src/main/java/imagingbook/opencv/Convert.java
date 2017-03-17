@@ -2,10 +2,13 @@ package imagingbook.opencv;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.FloatPointer;
+import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Size;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
+import ij.IJ;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -73,7 +76,7 @@ public abstract class Convert {
 		ByteProcessor bp = new ByteProcessor(w, h);
 		byte[] bData = (byte[]) bp.getPixels();
 
-		in.data(new BytePointer(bData));	//in.get(0, 0, bData);
+		in.data().get(bData);	//in.get(0, 0, bData);
 		return new ByteProcessor(w, h, bData);
 	}
 	
@@ -108,7 +111,7 @@ public abstract class Convert {
 		
 		ShortProcessor sp = new ShortProcessor(w, h);
 		short[] sData = (short[]) sp.getPixels(); //new short[w * h];  // elemSize = 1
-		in.get(0, 0, sData);
+//		in.get(0, 0, sData);
 		
 		return sp;
 	}
@@ -123,7 +126,7 @@ public abstract class Convert {
 		FloatProcessor fp = new FloatProcessor(w, h);
 		float[] fData = (float[]) fp.getPixels();
 		//in.get(0,  0, fData);
-		in.data(new FloatPointer(fData));	
+//		in.data(new FloatPointer(fData));	
 		
 		return new FloatProcessor(w, h, fData);
 	}
@@ -162,8 +165,15 @@ public abstract class Convert {
 		final int w = bp.getWidth();
 		final int h = bp.getHeight();
 		final byte[] bData = (byte[]) bp.getPixels();
-		Mat out = new Mat(h, w, opencv_core.CV_8UC1);
-		out.put(0, 0, bData);
+		
+		// version A - allocates new image array
+//		Size size = new Size(w, h);
+//		Mat out = new Mat(size, opencv_core.CV_8UC1);
+//		out.data().put(bData);
+
+		// version 2 - reuses the existing pixel array
+		Mat out = new Mat(h, w, opencv_core.CV_8UC1, new BytePointer(bData));
+		
 		return out;
 	}
 	
@@ -179,7 +189,7 @@ public abstract class Convert {
 			bData[i * 3 + 1] = (byte) ((iData[i] >>  8) & 0xFF);	// grn
 			bData[i * 3 + 2] = (byte) ((iData[i])       & 0xFF);	// blu
 		}
-		out.put(0, 0, bData);
+//		out.put(0, 0, bData);
 		return out;
 	}
 	
@@ -189,7 +199,7 @@ public abstract class Convert {
 		final short[] sData = (short[]) sp.getPixels();
 		
 		Mat out = new Mat(h, w, opencv_core.CV_16UC1);
-		out.put(0, 0, sData);
+//		out.put(0, 0, sData);
 		return out;
 	}
 	
@@ -199,7 +209,7 @@ public abstract class Convert {
 		final float[] fData = (float[]) cp.getPixels();
 		
 		Mat out = new Mat(h, w, opencv_core.CV_32FC1);
-		out.put(0, 0, fData);
+//		out.put(0, 0, fData);
 		return out;
 	}
 }
