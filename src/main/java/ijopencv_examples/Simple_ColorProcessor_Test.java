@@ -7,7 +7,7 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
-import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 
 
@@ -17,19 +17,19 @@ import ij.process.ImageProcessor;
  * This version uses the OpenCV bridge at the ImageProcessor level
  * @author WB
  */
-public class Simple_ByteProcessor_Test implements PlugInFilter {
+public class Simple_ColorProcessor_Test implements PlugInFilter {
 
 	ImagePlus imp = null;
 	
 	@Override
 	public int setup(String args, ImagePlus imp) {
 		this.imp = imp;
-		return DOES_8G + NO_CHANGES;
+		return DOES_RGB + NO_CHANGES;
 	}
 	
 	@Override
 	public void run(ImageProcessor ip) {
-		ByteProcessor bp = (ByteProcessor) ip;
+		ColorProcessor bp = (ColorProcessor) ip;
 		Mat mat = toMat(bp);
 		
 		ImageProcessor ip2 = toImageProcessor(mat);
