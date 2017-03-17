@@ -1,4 +1,4 @@
-package ijopencv_examples;
+package opencv_tests;
 
 import static imagingbook.opencv.Convert.toImageProcessor;
 import static imagingbook.opencv.Convert.toMat;
@@ -16,7 +16,7 @@ import ij.process.ShortProcessor;
  * This version uses the OpenCV bridge at the ImageProcessor level
  * @author WB
  */
-public class Simple_ShortProcessor_Test implements PlugInFilter {
+public class ShortProcessor_Test implements PlugInFilter {
 
 	ImagePlus imp = null;
 	

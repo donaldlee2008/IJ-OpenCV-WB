@@ -1,5 +1,7 @@
-package ijopencv_examples;
+package opencv_examples;
 
+import static imagingbook.opencv.Convert.toImageProcessor;
+import static imagingbook.opencv.Convert.toMat;
 import static org.bytedeco.javacpp.opencv_imgproc.ADAPTIVE_THRESH_GAUSSIAN_C;
 import static org.bytedeco.javacpp.opencv_imgproc.ADAPTIVE_THRESH_MEAN_C;
 import static org.bytedeco.javacpp.opencv_imgproc.THRESH_BINARY;
@@ -8,13 +10,10 @@ import static org.bytedeco.javacpp.opencv_imgproc.adaptiveThreshold;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
-import ijopencv.ijwb.ImagePlusMatConverterWB;
-import ijopencv.opencvwb.MatImagePlusConverterWB;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -24,9 +23,9 @@ import ijopencv.opencvwb.MatImagePlusConverterWB;
 
 /**
  *
- * @author jonathan
+ * @author jonathan, adapted by wilbur to use new bridge
  */
-public class Adaptive_ThresholdJ_2 implements PlugInFilter {
+public class Adaptive_ThresholdJ implements PlugInFilter {
 
 	String method;
 	String thresholdmethod;
@@ -43,24 +42,13 @@ public class Adaptive_ThresholdJ_2 implements PlugInFilter {
 	
 	@Override
 	public void run(ImageProcessor ip) {
-		//ImagePlus imp = IJ.getImage();
-
 		if (!showDialog()) {
 			return;
 		}
 
-		// Converter
-		IJ.log("making ImagePlusMatConverterWB");
-		ImagePlusMatConverterWB ic = new ImagePlusMatConverterWB();
-		IJ.log("making MatImagePlusConverterWB");
-		MatImagePlusConverterWB mip = new MatImagePlusConverterWB();
-
-		IJ.log("convert");
-		Mat m = ic.convert(imp);
-		// opencv_imgproc.cvtColor(m, m, opencv_imgproc.COLOR_BGR2GRAY);
-		IJ.log("new Mat");
-		Mat res = new Mat();
-
+		Mat src = toMat(ip);
+		Mat dst = src.clone();
+		
 		int adaptiveMethod;
 		if (method.equals("Mean")) {
 			adaptiveMethod = ADAPTIVE_THRESH_MEAN_C;
@@ -75,15 +63,13 @@ public class Adaptive_ThresholdJ_2 implements PlugInFilter {
 			thresType = THRESH_BINARY_INV;
 		}
 
-		IJ.log("adaptiveThreshold");
-		adaptiveThreshold(m, res, maxValue, adaptiveMethod, thresType, blockSize, 2);
+		adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresType, blockSize, 2);
 
-		IJ.log("convert back");
-		ImagePlus imp2 = mip.convert(res);
-		imp2.show();
-
-//		m.close();
-//		res.close();
+		ImageProcessor ip2 = toImageProcessor(dst);
+		new ImagePlus("Result", ip2).show();
+		
+		src.close();	// needed?
+		dst.close();
 	}
 
 	private boolean showDialog() {
@@ -107,7 +93,4 @@ public class Adaptive_ThresholdJ_2 implements PlugInFilter {
 		blockSize = (int) gd.getNextNumber();
 		return true;
 	}
-
-
-
 }

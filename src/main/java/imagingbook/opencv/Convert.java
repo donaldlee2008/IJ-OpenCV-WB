@@ -20,9 +20,9 @@ import ij.process.ShortProcessor;
  * See also http://docs.opencv.org/modules/core/doc/basic_structures.html#mat
  * Usage example:
  * <pre>
- 	ByteProcessor ip1 = ...;	// original ImageJ image
+ 	ImageProcessor ip1 = ...;	// original ImageJ image
 	Mat mat = toMat(ip1);		// copy as OpenCV image
-	ImageProcessor ip2 = toImageProcessor(mat); // reconstructed ImageJ image
+	ImageProcessor ip2 = toImageProcessor(mat); // converted back to ImageJ
  * </pre>
  * 
  * TODO: Check memory allocation, garbage issue...
@@ -101,7 +101,7 @@ public abstract class Convert {
 		final int h = mat.rows();	
 		byte[] pixels = new byte[w * h * (int) mat.elemSize()];
 		mat.data().get(pixels);
-		// convert byte array to in-encoded RGB values
+		// convert byte array to int-encoded RGB values
 		ColorProcessor cp = new ColorProcessor(w, h);
 		int[] iData = (int[]) cp.getPixels();
 		for (int i = 0; i < w * h; i++) {
@@ -203,7 +203,7 @@ public abstract class Convert {
 		final int[] pixels = (int[]) cp.getPixels();
 		byte[] bData = new byte[w * h * 3];
 		
-		// convert int-encoded RGB vales to byte array
+		// convert int-encoded RGB values to byte array
 		for (int i = 0; i < pixels.length; i++) {
 			bData[i * 3 + 0] = (byte) ((pixels[i] >> 16) & 0xFF);	// red
 			bData[i * 3 + 1] = (byte) ((pixels[i] >>  8) & 0xFF);	// grn
