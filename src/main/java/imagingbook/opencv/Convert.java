@@ -1,6 +1,10 @@
 package imagingbook.opencv;
 
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.FloatPointer;
+import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_core.Size;
 
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
@@ -31,24 +35,24 @@ public abstract class Convert {
 //		IJ.log("in.depth = " + in.depth());
 //		IJ.log("in.elemSize = " + in.elemSize());
 //		
-//		IJ.log("CvType.CV_8UC1 = " + CvType.CV_8UC1);
-//		IJ.log("CvType.CV_8UC3 = " + CvType.CV_8UC3);
-//		IJ.log("CvType.CV_16UC1 = " + CvType.CV_16UC1);
-//		IJ.log("CvType.CV_8UC3 = " + CvType.CV_32FC1);
+//		IJ.log("opencv_core.CV_8UC1 = " + opencv_core.CV_8UC1);
+//		IJ.log("opencv_core.CV_8UC3 = " + opencv_core.CV_8UC3);
+//		IJ.log("opencv_core.CV_16UC1 = " + opencv_core.CV_16UC1);
+//		IJ.log("opencv_core.CV_8UC3 = " + opencv_core.CV_32FC1);
 		
 		final int type = in.type();
 		ImageProcessor result = null;
 		
-		if (type == CvType.CV_8UC1) { // type = BufferedImage.TYPE_BYTE_GRAY;
+		if (type == opencv_core.CV_8UC1) { // type = BufferedImage.TYPE_BYTE_GRAY;
 			result = makeByteProcessor(in);
 		}
-		else if (type == CvType.CV_8UC3) {	// type = BufferedImage.TYPE_3BYTE_BGR;
+		else if (type == opencv_core.CV_8UC3) {	// type = BufferedImage.TYPE_3BYTE_BGR;
 			result =  makeColorProcessor(in); // faulty 
 		}
-		else if (type == CvType.CV_16UC1) {	// signed short image
+		else if (type == opencv_core.CV_16UC1) {	// signed short image
 			result =  makeShortProcessor(in); 
 		}
-		else if (type == CvType.CV_32FC1) {	// float image
+		else if (type == opencv_core.CV_32FC1) {	// float image
 			result =  makeFloatProcessor(in); 
 		}
 		else {
@@ -60,26 +64,29 @@ public abstract class Convert {
 	// private methods ----------------------------------------------
 	
 	private static ByteProcessor makeByteProcessor(Mat in) {
-		if (in.type() != CvType.CV_8UC1)
+		if (in.type() != opencv_core.CV_8UC1) // opencv_core.CV_8UC1) 
 			throw new IllegalArgumentException("wrong Mat type: " + in.type());
-		final int w = in.width();
-		final int h = in.height();
+		Size size = in.size();
+		final int w = size.width(); // in.width(); 
+		final int h = size.height(); // in.height();
 		
 		ByteProcessor bp = new ByteProcessor(w, h);
 		byte[] bData = (byte[]) bp.getPixels();
-		
-		in.get(0, 0, bData);
+
+		in.data(new BytePointer(bData));	//in.get(0, 0, bData);
 		return new ByteProcessor(w, h, bData);
 	}
 	
 	private static ColorProcessor makeColorProcessor(Mat in) {
-		if (in.type() != CvType.CV_8UC3)
+		if (in.type() != opencv_core.CV_8UC3)
 			throw new IllegalArgumentException("wrong Mat type: " + in.type());
-		final int w = in.width();
-		final int h = in.height();
+		Size size = in.size();
+		final int w = size.width(); // in.width(); 
+		final int h = size.height(); // in.height();
 		
 		byte[] bData = new byte[w * h * (int) in.elemSize()];
-		in.get(0, 0, bData);
+		
+		in.data(new BytePointer(bData));	//in.get(0, 0, bData);
 
 		ColorProcessor cp = new ColorProcessor(w, h);
 		int[] iData = (int[]) cp.getPixels();
@@ -93,10 +100,11 @@ public abstract class Convert {
 	}
 	
 	private static ShortProcessor makeShortProcessor(Mat in) {
-		if (in.type() != CvType.CV_16UC1)
+		if (in.type() != opencv_core.CV_16UC1)
 			throw new IllegalArgumentException("wrong Mat type: " + in.type());
-		final int w = in.width();
-		final int h = in.height();
+		Size size = in.size();
+		final int w = size.width(); // in.width(); 
+		final int h = size.height(); // in.height();
 		
 		ShortProcessor sp = new ShortProcessor(w, h);
 		short[] sData = (short[]) sp.getPixels(); //new short[w * h];  // elemSize = 1
@@ -106,14 +114,16 @@ public abstract class Convert {
 	}
 	
 	private static FloatProcessor makeFloatProcessor(Mat in) {
-		if (in.type() != CvType.CV_32FC1)
+		if (in.type() != opencv_core.CV_32FC1)
 			throw new IllegalArgumentException("wrong Mat type: " + in.type());
-		final int w = in.width();
-		final int h = in.height();
+		Size size = in.size();
+		final int w = size.width(); // in.width(); 
+		final int h = size.height(); // in.height();
 		
 		FloatProcessor fp = new FloatProcessor(w, h);
 		float[] fData = (float[]) fp.getPixels();
-		in.get(0,  0, fData);
+		//in.get(0,  0, fData);
+		in.data(new FloatPointer(fData));	
 		
 		return new FloatProcessor(w, h, fData);
 	}
@@ -152,7 +162,7 @@ public abstract class Convert {
 		final int w = bp.getWidth();
 		final int h = bp.getHeight();
 		final byte[] bData = (byte[]) bp.getPixels();
-		Mat out = new Mat(h, w, CvType.CV_8UC1);
+		Mat out = new Mat(h, w, opencv_core.CV_8UC1);
 		out.put(0, 0, bData);
 		return out;
 	}
@@ -162,7 +172,7 @@ public abstract class Convert {
 		final int h = cp.getHeight();
 		final int[] iData = (int[]) cp.getPixels();
 		
-		Mat out = new Mat(h, w, CvType.CV_8UC3);
+		Mat out = new Mat(h, w, opencv_core.CV_8UC3);
 		byte[] bData = new byte[w * h * (int) out.elemSize()];
 		for (int i = 0; i < iData.length; i++) {
 			bData[i * 3 + 0] = (byte) ((iData[i] >> 16) & 0xFF);	// red
@@ -178,7 +188,7 @@ public abstract class Convert {
 		final int h = sp.getHeight();
 		final short[] sData = (short[]) sp.getPixels();
 		
-		Mat out = new Mat(h, w, CvType.CV_16UC1);
+		Mat out = new Mat(h, w, opencv_core.CV_16UC1);
 		out.put(0, 0, sData);
 		return out;
 	}
@@ -188,7 +198,7 @@ public abstract class Convert {
 		final int h = cp.getHeight();
 		final float[] fData = (float[]) cp.getPixels();
 		
-		Mat out = new Mat(h, w, CvType.CV_32FC1);
+		Mat out = new Mat(h, w, opencv_core.CV_32FC1);
 		out.put(0, 0, fData);
 		return out;
 	}
