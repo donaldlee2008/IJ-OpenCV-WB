@@ -203,11 +203,15 @@ public abstract class Convert {
 		final int[] pixels = (int[]) cp.getPixels();
 		byte[] bData = new byte[w * h * 3];
 		
-		// convert int-encoded RGB values to byte array
-		for (int i = 0; i < pixels.length; i++) {
-			bData[i * 3 + 0] = (byte) ((pixels[i] >> 16) & 0xFF);	// red
-			bData[i * 3 + 1] = (byte) ((pixels[i] >>  8) & 0xFF);	// grn
-			bData[i * 3 + 2] = (byte) ((pixels[i])       & 0xFF);	// blu
+		//opencv mat bgr  java bufferimage rgb
+			// convert int-encoded RGB values to byte array
+			for (int i = 0; i < pixels.length; i++) {
+//				bData[i * 3 + 0] = (byte) ((pixels[i] >> 16) & 0xFF);	// red
+//				bData[i * 3 + 1] = (byte) ((pixels[i] >>  8) & 0xFF);	// grn
+//				bData[i * 3 + 2] = (byte) ((pixels[i])       & 0xFF);	// blu
+				bData[i * 3 + 2] = (byte) ((pixels[i] >> 16) & 0xFF);	// blu
+				bData[i * 3 + 1] = (byte) ((pixels[i] >>  8) & 0xFF);	// grn
+				bData[i * 3 + 0] = (byte) ((pixels[i])       & 0xFF);	// red
 		}
 		return new Mat(h, w, opencv_core.CV_8UC3, new BytePointer(bData));
 	}
