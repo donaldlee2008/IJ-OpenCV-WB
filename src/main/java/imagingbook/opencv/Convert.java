@@ -105,9 +105,13 @@ public abstract class Convert {
 		ColorProcessor cp = new ColorProcessor(w, h);
 		int[] iData = (int[]) cp.getPixels();
 		for (int i = 0; i < w * h; i++) {
-			int red = pixels[i * 3 + 0] & 0xff;
-			int grn = pixels[i * 3 + 1] & 0xff;
-			int blu = pixels[i * 3 + 2] & 0xff;
+							//opencv mat bgr  java bufferimage rgb
+//				int red = pixels[i * 3 + 0] & 0xff;
+//				int grn = pixels[i * 3 + 1] & 0xff;
+//				int blu = pixels[i * 3 + 2] & 0xff;
+				int blu = pixels[i * 3 + 0] & 0xff;
+				int grn = pixels[i * 3 + 1] & 0xff;
+				int red= pixels[i * 3 + 2] & 0xff;
 			iData[i] = (red << 16) | (grn << 8) | blu;
 		}
 		return cp;
