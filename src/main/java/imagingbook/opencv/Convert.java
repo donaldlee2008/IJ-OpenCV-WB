@@ -31,7 +31,31 @@ import ij.process.ShortProcessor;
  * @version 2017/03/17
  */
 public abstract class Convert {
-
+// --------------------------------------------------------------------
+				// OpenCV -> ImageJ (Mat -> ImagePlus)
+				// --------------------------------------------------------------------
+				
+		public static ImagePlus toImagePlus(Mat mat) {
+			final int type = mat.type();
+			ImageProcessor result = null;
+			
+			if (type == opencv_core.CV_8UC1) { // type = BufferedImage.TYPE_BYTE_GRAY;
+				result = makeByteProcessor(mat);
+			}
+			else if (type == opencv_core.CV_8UC3) {	// type = BufferedImage.TYPE_3BYTE_BGR;
+				result =  makeColorProcessor(mat); // faulty 
+			}
+			else if (type == opencv_core.CV_16UC1) {	// signed short image
+				result =  makeShortProcessor(mat); 
+			}
+			else if (type == opencv_core.CV_32FC1) {	// float image
+				result =  makeFloatProcessor(mat); 
+			}
+			else {
+				throw new IllegalArgumentException("cannot convert Mat of type " + type);
+			}	
+			return new ImagePlus("",result);
+		}
 	// --------------------------------------------------------------------
 	// OpenCV -> ImageJ (Mat -> ImageProcessor)
 	// --------------------------------------------------------------------
